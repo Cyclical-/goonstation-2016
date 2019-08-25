@@ -133,6 +133,8 @@
 	var/list/pathogens = list()
 	var/list/immunities = list()
 
+	/var/list/sockets = list()
+
 	var/datum/simsHolder/sims = null
 
 	var/list/random_emotes = list("drool", "blink", "yawn", "burp", "twitch", "twitch_v",\

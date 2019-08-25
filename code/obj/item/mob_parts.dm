@@ -128,7 +128,7 @@
 		return
 
 	//for humans
-	attach(var/mob/living/carbon/human/attachee,var/mob/attacher,var/both_legs = 0)
+	attach(var/mob/living/carbon/human/attachee,var/mob/attacher,var/both_legs = 0, /var/socket = 0)
 		if(!both_legs) attachee.limbs.vars[src.slot] = src
 		else
 			attachee.limbs.l_leg = src
@@ -138,7 +138,7 @@
 		src.layer = initial(src.layer)
 		src.screen_loc = ""
 		src.set_loc(attachee)
-		src.remove_stage = 2
+		src.remove_stage = socket ? 1 : 2
 
 		for(var/mob/O in AIviewers(attachee, null))
 			if(O == (attacher || attachee))
@@ -147,12 +147,13 @@
 				O.show_message("<span style=\"color:red\">[attacher] attaches [src] to \his own stump[both_legs? "s" : ""]!</span>", 1)
 			else
 				O.show_message("<span style=\"color:red\">[attachee] has [src] attached to \his stump[both_legs? "s" : ""] by [attacher].</span>", 1)
-
+		
+		var/insecure = socket ? "" : " It doesn't look very secure!"
 		if(attachee != attacher)
-			boutput(attachee, "<span style=\"color:red\">[attacher] attaches [src] to your stump[both_legs? "s" : ""]. It doesn't look very secure!</span>")
-			boutput(attacher, "<span style=\"color:red\">You attach [src] to [attachee]'s stump[both_legs? "s" : ""]. It doesn't look very secure!</span>")
+			boutput(attachee, "<span style=\"color:red\">[attacher] attaches [src] to your stump[both_legs? "s" : ""].[insecure]</span>")
+			boutput(attacher, "<span style=\"color:red\">You attach [src] to [attachee]'s stump[both_legs? "s" : ""].[insecure]</span>")
 		else
-			boutput(attacher, "<span style=\"color:red\">You attach [src] to your own stump[both_legs? "s" : ""]. It doesn't look very secure!</span>")
+			boutput(attacher, "<span style=\"color:red\">You attach [src] to your own stump[both_legs? "s" : ""].[insecure]</span>")
 
 		attachee.set_body_icon_dirty()
 		spawn(rand(150,200))

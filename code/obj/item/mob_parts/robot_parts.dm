@@ -425,11 +425,14 @@
 
 		if(!(user.zone_sel.selecting in list("l_arm","r_arm")) || !istype(M, /mob/living/carbon/human))
 			return ..()
-
-		if(!((locate(/obj/machinery/optable) in M.loc) && M.lying) && !((locate(/obj/table) in M.loc) && (M.paralysis || M.stat)))
-			return ..()
-
+		
 		var/mob/living/carbon/human/H = M
+
+		var/socket_flag = user.zone_sel.selecting in H.sockets
+
+		if (!socket_flag)
+			if(!((locate(/obj/machinery/optable) in M.loc) && M.lying) && !((locate(/obj/table) in M.loc) && (M.paralysis || M.stat)))
+				return ..()
 
 		if(H.limbs.vars.Find(src.slot) && H.limbs.vars[src.slot])
 			boutput(user, "<span style=\"color:red\">[H.name] already has one of those!</span>")
@@ -439,7 +442,7 @@
 			boutput(user, "<span style=\"color:red\">That arm is too big to fit on [H]'s body!</span>")
 			return
 
-		attach(H,user)
+		attach(H,user, 0, socket_flag)
 
 		return
 
@@ -588,10 +591,13 @@
 		if(!(user.zone_sel.selecting in list("l_leg","r_leg")) || !istype(M, /mob/living/carbon/human))
 			return ..()
 
-		if(!((locate(/obj/machinery/optable) in M.loc) && M.lying) && !((locate(/obj/table) in M.loc) && (M.paralysis || M.stat)))
-			return ..()
-
 		var/mob/living/carbon/human/H = M
+
+		var/socket_flag = user.zone_sel.selecting in H.sockets
+
+		if (!socket_flag)
+			if(!((locate(/obj/machinery/optable) in M.loc) && M.lying) && !((locate(/obj/table) in M.loc) && (M.paralysis || M.stat)))
+				return ..()
 
 		if(!(src.slot in H.limbs.vars))
 			boutput(user, "<span style=\"color:red\">You can't find a way to fit that on.</span>")
@@ -609,7 +615,7 @@
 			boutput(user, "<span style=\"color:red\">Both of [H]'s legs must be removed to fit them with treads!</span>")
 			return
 */
-		attach(H,user)
+		attach(H,user, 0, socket_flag)
 
 		return
 
