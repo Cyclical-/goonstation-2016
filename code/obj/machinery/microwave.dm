@@ -21,6 +21,26 @@
 	var/obj/item/reagent_containers/food/snacks/being_cooked = null // The item being cooked
 	var/obj/item/extra_item // One non food item that can be added
 	mats = 12
+	var/emagged = 0
+
+	emag_act(var/mob/user, var/obj/item/card/emag/E)
+		if (src.emagged)
+			if (user)
+				user.show_text("You use the card to change the internal radiation setting to \"IONIZING\"", "blue")
+			src.emagged = 1
+			return 1
+		else
+			if (user)
+				user.show_text("The [src] has already been tampered with", "red")
+				return 0
+	
+	demag(var/mob/user)
+		if (!src.emagged)
+			return 0
+		if (user)
+			user.show_text("You reset the radiation levels to a more food-safe setting.", "blue")
+		src.emagged = false
+		return 1
 
 /obj/machinery/microwave/New() // *** After making the recipe in datums\recipes.dm, add it in here! ***
 	..()
@@ -38,7 +58,6 @@
 	src.available_recipes += new /datum/recipe/donkpocket_warm(src)
 	src.available_recipes += new /datum/recipe/pie(src)
 	src.available_recipes += new /datum/recipe/popcorn(src)
-
 
 /*******************
 *   Item Adding
@@ -273,6 +292,8 @@ Please clean it before use!</TT><BR>
 							src.being_cooked:warm = 1
 							src.being_cooked.name = "warm " + src.being_cooked.name
 							src.being_cooked:cooltime()
+						if (src.emagged)
+							src.being_cooked.reagents.add_reagent("radium", 25)
 						src.being_cooked.set_loc(get_turf(src)) // Create the new item
 						src.being_cooked = null // We're done!
 
@@ -280,3 +301,4 @@ Please clean it before use!</TT><BR>
 					src.icon_state = "mw"
 			else
 				return
+

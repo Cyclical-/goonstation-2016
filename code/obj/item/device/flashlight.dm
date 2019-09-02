@@ -11,6 +11,8 @@
 	m_amt = 50
 	g_amt = 20
 	mats = 2
+	var/emagged = 0
+	var/broken = 0
 	var/col_r = 0.9
 	var/col_g = 0.8
 	var/col_b = 0.7
@@ -23,13 +25,51 @@
 		light.set_brightness(1)
 		light.set_color(col_r, col_g, col_b)
 		light.attach(src)
+	
+	emag_act(var/mob/user, var/obj/item/card/emag/E)
+		if (!src.emagged)
+			if (user)
+				usr.show_text("You short out the voltage regulator in the lighting circuit.", "blue")
+			src.emagged = 1
+		else
+			if (user)
+				user.show_text("The regulator is already burned out." "red")
+			return 0
+	
+	demag(var/mob/user)
+		if (!src.emagged)
+			return 0
+		if (user)
+			user.show_text("You repair the voltage regulators.", "blue")
+		src.emagged = 0
+		return 1
+	
+
 
 	attack_self(mob/user)
+		if (src.broken)
+			name = "broken flashlight"
+			return
 		on = !on
 		icon_state = "flight[on]"
 
+		src.add_fingerprint(user)
+		
 		if (on)
 			light.enable()
+			if (src.emagged) // Burn them all!
+				for (var/mob/M in oviewers(3, get_turf(src)))
+					if (user.dir == get_dir(src, M)) // If the mob is in the direction we're looking
+						var/mob/living/target = M
+						if (istype(target))
+							target.apply_flash(60, 12, 0, 0, rand(2, 8), rand(5, 20), 0., 30, 100)
+							logTheThing("combat", user, target, "flashes %target% with an emagged flashlight.")
+				user.visible_message("<span style=\"color:red\">The bulb in [user]'s hand explodes with a blinding flash!</span>", "<span style=\"color:red\">The bulb in your hand explodes with a blinding flash!</span>")
+				on = 0
+				light.disable()
+				icon_state = "flight0"
+				name = "broken flashlight"
+				src.broken = 1
 		else
 			light.disable()
 

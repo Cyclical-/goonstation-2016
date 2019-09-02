@@ -5,6 +5,7 @@
 	icon_state = "sheater0"
 	name = "space heater"
 	desc = "Made by Space Amish using traditional space techniques, this heater is guaranteed not to set the station on fire."
+	var/emagged = 0
 	var/obj/item/cell/cell
 	var/on = 0
 	var/open = 0
@@ -28,6 +29,25 @@
 		else
 			icon_state = "sheater[on]"
 		return
+	
+	emag_act(var/mob/user, var/obj/item/card/emag/E)
+		if (!src.emagged)
+			if (user)
+				user.show_text("You short out the temperature limiter circuit in the [src].", "blue")
+			src.emagged = 1
+			return 1
+		else
+			if (user)
+				user.show_text("The temperature limiter is already burned out.", "red")
+				return 0
+	
+	demag(mob/user)
+		if (!src.emagged)
+			return 0
+		if (user)
+			user.show_text("You repair the temperature regulator in the [src].", "blue")
+		src.emagged = 0
+		return 1
 
 	examine()
 		set src in oview(12)
@@ -118,9 +138,9 @@
 
 				if("temp")
 					var/value = text2num(href_list["val"])
-
+					var/max = src.emagged ? 400 : 90
 					// limit to 20-90 degC
-					set_temperature = dd_range(20, 90, set_temperature + value)
+					set_temperature = dd_range(20, max, set_temperature + value)
 
 				if("cellremove")
 					if(open && cell && !usr.equipped())

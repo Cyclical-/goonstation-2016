@@ -15,6 +15,7 @@
 	var/secure = 1 // Access panel still secured?
 	var/use = 0 // Times the flash has been used.
 	var/l_time = 0 // Anti-spam cooldown (in relation to world time).
+	var/emagged = 0 // Booby Trapped?
 
 	var/eye_damage_mod = 0
 	var/range_mod = 0
@@ -43,6 +44,25 @@
 			var/mob/living/silicon/robot/R = user
 			if (istype(R))
 				R.cell.use(150)
+
+	emag_act(var/mob/user, var/obj/item/card/emag/E)
+		if (!src.emagged)
+			if (user)
+				user.show_text("You use the card to poke a hole in the back of the [src]. That may not have been a very good idea.", "blue")
+			src.emagged = 1
+			return 1
+		else
+			if (user)
+				user.show_text("There already seems to be some modifications done to the device.", "red")
+	
+	demag(var/mob/user)
+		if (!src.emagged)
+			return 0
+		if (user)
+			user.show_text("You fill the strange hole in the back of the [src].", "blue")
+		src.emagged = 0
+		return 1
+		
 
 // Tweaked attack and attack_self to reduce the amount of duplicate code. Turboflashes to be precise (Convair880).
 /obj/item/device/flash/attack(mob/living/M as mob, mob/user as mob)
@@ -122,6 +142,11 @@
 
 	// We're flashing somebody directly, hence the 100% chance to disrupt cloaking device at the end.
 	M.apply_flash(animation_duration, weakened, 0, 0, eye_blurry, eye_damage, 0, burning, 100)
+	if (src.emagged)
+		user.apply_flash(animation_duration, weakened, 0, 0, eye_blurry, eye_damage, 0. burning, 100)
+
+
+
 
 	// Rev mode check.
 	if (ticker && ticker.mode && istype(ticker.mode, /datum/game_mode/revolution))
@@ -149,7 +174,8 @@
 	// Log entry.
 	M.visible_message("<span style=\"color:red\">[user] blinds [M] with the [src.name]!</span>")
 	logTheThing("combat", user, M, "blinds %target% with [src] at [log_loc(user)].")
-
+	if (src.emagged)
+		logTheThing("combat", user, user, "blinds themself with [src] at [log_loc(user)].")
 	// Handle bulb wear.
 	if (src.turboflash)
 		status = 0
