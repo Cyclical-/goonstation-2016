@@ -45,8 +45,29 @@
 	protective_temperature = 0
 	movement_speed_mod = 1
 	var/uses = 6
+	var/emagged = 0
 	burn_possible = 0
 	module_research = list("efficiency" = 10)
+
+	emag_act(var/mob/user, var/obj/item/card/emag/E)
+		if (!src.emagged)
+			if (user)
+				user.show_text("You swipe the card over the pressure regulator, breaking it.", "blue")
+			src.emagged = 1
+			return 1
+		else
+			if (user)
+				user.show_text("The regulator seems to have already been tampered with.", "red")
+			return 0
+	
+	demag(var/mob/user)
+		if (!src.emagged)
+			return 0
+		else
+			if (user)
+				user.show_text("You repair the pressure regulator on the [src].", "blue")
+			src.emagged = 0
+			return 1
 
 /obj/item/clothing/shoes/sonic
 	name = "Sahnic the Bushpig's Shoes"

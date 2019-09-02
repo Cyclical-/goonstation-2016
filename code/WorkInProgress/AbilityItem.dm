@@ -147,7 +147,7 @@
 
 		playsound(get_turf(the_mob), 'sound/effects/bamf.ogg', 100, 1)
 
-		if(prob(explosion_chance))
+		if(prob(explosion_chance) || R.emagged)
 			boutput(the_mob, "<span style=\"color:red\">The Rocket Shoes blow up</span>")
 			explosion(src, get_turf(the_mob), -1, -1, 1, 1)
 			qdel(the_item)
