@@ -122,6 +122,8 @@
 
 
 		else
+			if (on && src.emagged)
+				user.show_text("The button seems to be stuck!", "red")
 			on = !on
 			user.visible_message("<span style=\"color:blue\">[user] switches [on ? "on" : "off"] the [src].</span>","<span style=\"color:blue\">You switch [on ? "on" : "off"] the [src].</span>")
 			update_icon()
