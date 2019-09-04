@@ -32,10 +32,15 @@
 	
 	emag_act(var/mob/user, var/obj/item/card/emag/E)
 		if (!src.emagged)
-			if (user)
-				user.show_text("You short out the temperature limiter circuit in the [src].", "blue")
-			src.emagged = 1
-			return 1
+			if (open)
+				if (user)
+					user.show_text("You short out the temperature limiter circuit in the [src].", "blue")
+				src.emagged = 1
+				return 1
+			else
+				if (user)
+					user.show_text("The internal circuitry must be exposed!", "red")
+				return 0
 		else
 			if (user)
 				user.show_text("The temperature limiter is already burned out.", "red")
@@ -111,7 +116,7 @@
 
 			dat += "<A href='?src=\ref[src];op=temp;val=-5'>-</A>"
 
-			dat += " [set_temperature]&deg;C "
+			dat += " <A href='?src=\ref[src];op=set_temp'>[set_temperature]&deg;C </A>"
 			dat += "<A href='?src=\ref[src];op=temp;val=5'>+</A><BR>"
 
 			user.machine = src
@@ -124,9 +129,9 @@
 		else
 			if (on && src.emagged)
 				user.show_text("The button seems to be stuck!", "red")
-			on = !on
-			user.visible_message("<span style=\"color:blue\">[user] switches [on ? "on" : "off"] the [src].</span>","<span style=\"color:blue\">You switch [on ? "on" : "off"] the [src].</span>")
-			update_icon()
+				on = !on
+				user.visible_message("<span style=\"color:blue\">[user] switches [on ? "on" : "off"] the [src].</span>","<span style=\"color:blue\">You switch [on ? "on" : "off"] the [src].</span>")
+				update_icon()
 		return
 
 
@@ -138,6 +143,12 @@
 
 			switch(href_list["op"])
 
+				if("set_temp")
+					var/value = input(usr, "Target temperature (20C-[src.emagged ? 400 : 90]C):", "Enter Target Temperature", src.set_temperature)
+					if (!isnum(value)) return
+					var/max = src.emagged ? 400 : 90
+					set_temperature = dd_range(20, max, value)
+					
 				if("temp")
 					var/value = text2num(href_list["val"])
 					var/max = src.emagged ? 400 : 90
@@ -181,7 +192,7 @@
 					var/datum/gas_mixture/env = L.return_air()
 					if(env.temperature < (set_temperature+T0C))
 
-						var/transfer_moles = 0.25 * env.total_moles()
+						var/transfer_moles = src.emagged ? 0.5 * env.total_moles() : 0.25 * env.total_moles()
 
 						var/datum/gas_mixture/removed = env.remove(transfer_moles)
 
