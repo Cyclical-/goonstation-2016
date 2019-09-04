@@ -59,12 +59,12 @@
 			light.enable()
 			if (src.emagged) // Burn them all!
 				for (var/mob/M in oviewers(3, get_turf(src)))
-					if (user.dir == get_dir(src, M)) // If the mob is in the direction we're looking
+					if (in_cone_of_vision(user, M)) // If the mob is in the direction we're looking
 						var/mob/living/target = M
 						if (istype(target))
 							target.apply_flash(60, 12, 0, 0, rand(2, 8), rand(5, 20), 0., 30, 100)
 							logTheThing("combat", user, target, "flashes %target% with an emagged flashlight.")
-				user.visible_message("<span style=\"color:red\">The bulb in [user]'s hand explodes with a blinding flash!</span>", "<span style=\"color:red\">The bulb in your hand explodes with a blinding flash!</span>")
+				user.visible_message("<span style=\"color:red\">The [src] in [user]'s hand bursts with a blinding flash!</span>", "<span style=\"color:red\">The bulb in your hand explodes with a blinding flash!</span>")
 				on = 0
 				light.disable()
 				icon_state = "flight0"
