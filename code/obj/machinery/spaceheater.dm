@@ -204,22 +204,22 @@
 
 						var/datum/gas_mixture/removed = env.remove(transfer_moles)
 
-						boutput(world, "got [transfer_moles] moles at [removed.temperature]")
+						//boutput(world, "got [transfer_moles] moles at [removed.temperature]")
 
 						if(removed)
 
 							var/heat_capacity = removed.heat_capacity()
-							boutput(world, "heating ([heat_capacity])")
+							//boutput(world, "heating ([heat_capacity])")
 							var/current_power = src.emagged ? src.heating_power * 3: src.heating_power
 							if(heat_capacity)
 								removed.temperature = (removed.temperature*heat_capacity + current_power)/heat_capacity
 							cell.use(current_power/20000)
 
-							boutput(world, "now at [removed.temperature]")
+							//boutput(world, "now at [removed.temperature]")
 
 						env.merge(removed)
 
-						boutput(world, "turf now at [env.temperature]")
+						//boutput(world, "turf now at [env.temperature]")
 
 
 			else
