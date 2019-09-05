@@ -50,6 +50,7 @@
 			if (user)
 				user.show_text("You use the card to poke a hole in the back of the [src]. That may not have been a very good idea.", "blue")
 			src.emagged = 1
+			src.desc += " There seems to be a tiny hole drilled into the back of it."
 			return 1
 		else
 			if (user)
@@ -61,6 +62,7 @@
 		if (user)
 			user.show_text("You fill the strange hole in the back of the [src].", "blue")
 		src.emagged = 0
+		src.desc = "A device that emits an extremely bright light when used. Useful for briefly stunning people or starting a dance party."
 		return 1
 
 

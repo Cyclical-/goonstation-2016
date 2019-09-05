@@ -58,7 +58,7 @@
 		if (on)
 			light.enable()
 			if (src.emagged) // Burn them all!
-				for (var/mob/M in oviewers(3, get_turf(src)))
+				for (var/mob/M in oviewers(2, get_turf(src)))
 					if (in_cone_of_vision(user, M)) // If the mob is in the direction we're looking
 						var/mob/living/target = M
 						if (istype(target))

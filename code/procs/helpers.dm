@@ -2319,7 +2319,7 @@ var/list/lowercase_letters = list("a", "b", "c", "d", "e", "f", "g", "h", "i", "
 		return
 	return C.preferences.hud_style
 
-/proc/in_cone_of_vision(var/mob/seer, var/atom/target)
+/proc/in_cone_of_vision(var/atom/seer, var/atom/target)
 	/*
 		This proc checks if one atom is in the cone of vision of
 		another one. It uses the following map grid for the check,

@@ -54,7 +54,7 @@
 			if (user)
 				user.show_text("You swipe the card over the pressure regulator, breaking it.", "blue")
 			src.emagged = 1
-			src.desc += "Something seems to be wrong with them, though."
+			src.desc += " Something seems to be wrong with them, though."
 			return 1
 		else
 			if (user)
