@@ -25,7 +25,7 @@
 		light.set_brightness(1)
 		light.set_color(col_r, col_g, col_b)
 		light.attach(src)
-	
+
 	emag_act(var/mob/user, var/obj/item/card/emag/E)
 		if (!src.emagged)
 			if (user)
@@ -33,9 +33,9 @@
 			src.emagged = 1
 		else
 			if (user)
-				user.show_text("The regulator is already burned out." "red")
+				user.show_text("The regulator is already burned out.", "red")
 			return 0
-	
+
 	demag(var/mob/user)
 		if (!src.emagged)
 			return 0
@@ -43,7 +43,7 @@
 			user.show_text("You repair the voltage regulators.", "blue")
 		src.emagged = 0
 		return 1
-	
+
 
 
 	attack_self(mob/user)
@@ -54,7 +54,7 @@
 		icon_state = "flight[on]"
 
 		src.add_fingerprint(user)
-		
+
 		if (on)
 			light.enable()
 			if (src.emagged) // Burn them all!
@@ -67,7 +67,7 @@
 				user.visible_message("<span style=\"color:red\">The [src] in [user]'s hand bursts with a blinding flash!</span>", "<span style=\"color:red\">The bulb in your hand explodes with a blinding flash!</span>")
 				on = 0
 				light.disable()
-				icon_state = "flight0"
+				icon_state = "flightbroken"
 				name = "broken flashlight"
 				src.broken = 1
 		else

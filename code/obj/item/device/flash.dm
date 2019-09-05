@@ -54,7 +54,7 @@
 		else
 			if (user)
 				user.show_text("There already seems to be some modifications done to the device.", "red")
-	
+
 	demag(var/mob/user)
 		if (!src.emagged)
 			return 0
@@ -62,7 +62,7 @@
 			user.show_text("You fill the strange hole in the back of the [src].", "blue")
 		src.emagged = 0
 		return 1
-		
+
 
 // Tweaked attack and attack_self to reduce the amount of duplicate code. Turboflashes to be precise (Convair880).
 /obj/item/device/flash/attack(mob/living/M as mob, mob/user as mob)
@@ -143,7 +143,7 @@
 	// We're flashing somebody directly, hence the 100% chance to disrupt cloaking device at the end.
 	M.apply_flash(animation_duration, weakened, 0, 0, eye_blurry, eye_damage, 0, burning, 100)
 	if (src.emagged)
-		user.apply_flash(animation_duration, weakened, 0, 0, eye_blurry, eye_damage, 0. burning, 100)
+		user.apply_flash(animation_duration, weakened, 0, 0, eye_blurry, eye_damage, 0, burning, 100)
 
 
 

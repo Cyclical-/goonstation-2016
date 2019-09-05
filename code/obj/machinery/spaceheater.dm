@@ -29,13 +29,14 @@
 		else
 			icon_state = "sheater[on]"
 		return
-	
+
 	emag_act(var/mob/user, var/obj/item/card/emag/E)
 		if (!src.emagged)
 			if (open)
 				if (user)
 					user.show_text("You short out the temperature limiter circuit in the [src].", "blue")
 				src.emagged = 1
+				src.desc = "Made by Space Amish using traditional space techniques, this heater is guaranteed to set the station on fire."
 				return 1
 			else
 				if (user)
@@ -45,12 +46,13 @@
 			if (user)
 				user.show_text("The temperature limiter is already burned out.", "red")
 				return 0
-	
+
 	demag(mob/user)
 		if (!src.emagged)
 			return 0
 		if (user)
 			user.show_text("You repair the temperature regulator in the [src].", "blue")
+		src.desc = "Made by Space Amish using traditional space techniques, this heater is guaranteed not to set the station on fire."
 		src.emagged = 0
 		return 1
 
@@ -95,6 +97,11 @@
 			if(!open && user.machine == src)
 				user << browse(null, "window=spaceheater")
 				user.machine = null
+		else if (istype(I, /obj/item/wrench))
+			if (user)
+				user.show_text("You [anchored ? "release" : "anchor"] the [src]", "blue")
+			src.anchored = !src.anchored
+			playsound(src.loc, 'sound/items/Ratchet.ogg', 40, 0, 0)
 		else
 			..()
 		return
@@ -116,7 +123,7 @@
 
 			dat += "<A href='?src=\ref[src];op=temp;val=-5'>-</A>"
 
-			dat += " <A href='?src=\ref[src];op=set_temp'>[set_temperature]&deg;C </A>"
+			dat += " <A href='?src=\ref[src];op=set_temp'> [set_temperature]&deg;C </A>"
 			dat += "<A href='?src=\ref[src];op=temp;val=5'>+</A><BR>"
 
 			user.machine = src
@@ -129,6 +136,7 @@
 		else
 			if (on && src.emagged)
 				user.show_text("The button seems to be stuck!", "red")
+			else
 				on = !on
 				user.visible_message("<span style=\"color:blue\">[user] switches [on ? "on" : "off"] the [src].</span>","<span style=\"color:blue\">You switch [on ? "on" : "off"] the [src].</span>")
 				update_icon()
@@ -148,7 +156,7 @@
 					if (!isnum(value)) return
 					var/max = src.emagged ? 400 : 90
 					set_temperature = dd_range(20, max, value)
-					
+
 				if("temp")
 					var/value = text2num(href_list["val"])
 					var/max = src.emagged ? 400 : 90
@@ -196,21 +204,22 @@
 
 						var/datum/gas_mixture/removed = env.remove(transfer_moles)
 
-						//boutput(world, "got [transfer_moles] moles at [removed.temperature]")
+						boutput(world, "got [transfer_moles] moles at [removed.temperature]")
 
 						if(removed)
 
 							var/heat_capacity = removed.heat_capacity()
-							//boutput(world, "heating ([heat_capacity])")
+							boutput(world, "heating ([heat_capacity])")
+							var/current_power = src.emagged ? src.heating_power * 3: src.heating_power
 							if(heat_capacity)
-								removed.temperature = (removed.temperature*heat_capacity + heating_power)/heat_capacity
-							cell.use(heating_power/20000)
+								removed.temperature = (removed.temperature*heat_capacity + current_power)/heat_capacity
+							cell.use(current_power/20000)
 
-							//boutput(world, "now at [removed.temperature]")
+							boutput(world, "now at [removed.temperature]")
 
 						env.merge(removed)
 
-						//boutput(world, "turf now at [env.temperature]")
+						boutput(world, "turf now at [env.temperature]")
 
 
 			else

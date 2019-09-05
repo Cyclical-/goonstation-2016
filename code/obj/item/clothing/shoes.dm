@@ -54,12 +54,13 @@
 			if (user)
 				user.show_text("You swipe the card over the pressure regulator, breaking it.", "blue")
 			src.emagged = 1
+			src.desc += "Something seems to be wrong with them, though."
 			return 1
 		else
 			if (user)
 				user.show_text("The regulator seems to have already been tampered with.", "red")
 			return 0
-	
+
 	demag(var/mob/user)
 		if (!src.emagged)
 			return 0
@@ -67,6 +68,7 @@
 			if (user)
 				user.show_text("You repair the pressure regulator on the [src].", "blue")
 			src.emagged = 0
+			src.desc = "A gas tank taped to some shoes. Brilliant. They also look kind of silly."
 			return 1
 
 /obj/item/clothing/shoes/sonic

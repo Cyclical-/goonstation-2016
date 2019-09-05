@@ -2319,11 +2319,11 @@ var/list/lowercase_letters = list("a", "b", "c", "d", "e", "f", "g", "h", "i", "
 		return
 	return C.preferences.hud_style
 
-/proc/in_cone_of_vision(mob/seer, atom/target)
+/proc/in_cone_of_vision(var/mob/seer, var/atom/target)
 	/*
 		This proc checks if one atom is in the cone of vision of
 		another one. It uses the following map grid for the check,
-		where each point is an integer coordinate and the seer is 
+		where each point is an integer coordinate and the seer is
 		at point X:
 			 	  *
 			 	* *
@@ -2332,8 +2332,7 @@ var/list/lowercase_letters = list("a", "b", "c", "d", "e", "f", "g", "h", "i", "
 				  *
 		A '*' represents a point that is within X's FOV
 	*/
-	var/seer_dir = seer.dir
-	var/dir = get_dir(seer, entity)
+	var/dir = get_dir(seer, target)
 	switch(dir)
 		if(NORTHEAST, SOUTHWEST)
 			var/abs_x = abs(target.x - seer.x)
@@ -2342,16 +2341,15 @@ var/list/lowercase_letters = list("a", "b", "c", "d", "e", "f", "g", "h", "i", "
 			if (abs_y > abs_x)
 				dir = turn(dir, 45)
 			else if (abs_x > abs_y)
-				did = turn(dir, -45)
-			
+				dir = turn(dir, -45)
+
 		if(NORTHWEST, SOUTHEAST)
 			var/abs_x = abs(target.x - seer.x)
 			var/abs_y = abs(target.y - seer.y)
 			if (abs_y > abs_x)
 				dir = turn(dir, -45)
 			else if (abs_x > abs_y)
-				did = turn(dir, 45)
-	
+				dir = turn(dir, 45)
+
 	return (seer.dir == dir)
 
-	
