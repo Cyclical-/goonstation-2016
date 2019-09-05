@@ -65,6 +65,8 @@
 							target.apply_flash(60, 12, 0, 0, rand(2, 8), rand(5, 20), 0., 30, 100)
 							logTheThing("combat", user, target, "flashes %target% with an emagged flashlight.")
 				user.visible_message("<span style=\"color:red\">The [src] in [user]'s hand bursts with a blinding flash!</span>", "<span style=\"color:red\">The bulb in your hand explodes with a blinding flash!</span>")
+				user.update_burning(15)
+				user.update_health()
 				on = 0
 				light.disable()
 				icon_state = "flightbroken"
