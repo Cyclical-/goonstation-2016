@@ -189,8 +189,12 @@
 
 /obj/item/reagent_containers/food/snacks/burger/heartburger
 	name = "heartburger"
-	desc = "This burger tastes kind of offal."
+	desc = "Made with Love among other things."
 	icon_state = "heartburger"
+
+	New()
+		..()
+		reagents.add_reagent("pure love", 15)
 
 /obj/item/reagent_containers/food/snacks/burger/brainburger
 	name = "brainburger"
