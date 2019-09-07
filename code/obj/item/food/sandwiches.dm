@@ -189,7 +189,7 @@
 
 /obj/item/reagent_containers/food/snacks/burger/heartburger
 	name = "heartburger"
-	desc = "Made with Love among other things."
+	desc = "A hearty meal, made with Love."
 	icon_state = "heartburger"
 
 	New()
