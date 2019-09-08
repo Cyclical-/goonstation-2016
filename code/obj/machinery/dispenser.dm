@@ -7,10 +7,30 @@
 	icon = 'icons/obj/objects.dmi'
 	icon_state = "dispenser"
 	density = 1
+	var/emagged = 0
+	var/n2otanks = 5.0
 	var/o2tanks = 10.0
 	var/pltanks = 10.0
 	anchored = 1.0
 	mats = 24
+
+	emag_act(var/mob/user, var/obj/item/card/emag/E)
+		if (!src.emagged)
+			if (user)
+				user.show_text("You short out the access controls on the [src].", "blue")
+			src.emagged = 1
+			return 1
+		else
+			if (user)
+				user.show_text("The access controls are already lifted.", "red")
+			return 0
+
+	demag(var/mob/user)
+		if (!src.emagged) return 0
+		if (user)
+			user.show_text("You restore the access controls on the [src].", "blue")
+		src.emagged = 0
+
 
 /obj/machinery/dispenser/ex_act(severity)
 	switch(severity)
@@ -68,7 +88,9 @@
 	if(stat & BROKEN)
 		return
 	user.machine = src
-	var/dat = text("<TT><B>Loaded Tank Dispensing Unit</B><BR><br><FONT color = 'blue'><B>Oxygen</B>: []</FONT> []<BR><br><FONT color = 'orange'><B>Plasma</B>: []</FONT> []<BR><br></TT>", src.o2tanks, (src.o2tanks ? text("<A href='?src=\ref[];oxygen=1'>Dispense</A>", src) : "empty"), src.pltanks, (src.pltanks ? text("<A href='?src=\ref[];plasma=1'>Dispense</A>", src) : "empty"))
+	var/dat = text("<TT><B>Loaded Tank Dispensing Unit</B><BR><br><FONT color = 'blue'><B>Oxygen</B>: []</FONT> []<BR><br><FONT color = 'orange'><B>Plasma</B>: []</FONT> []<BR><br>[src.emagged ? "" : "</TT>"]", src.o2tanks, (src.o2tanks ? text("<A href='?src=\ref[];oxygen=1'>Dispense</A>", src) : "empty"), src.pltanks, (src.pltanks ? text("<A href='?src=\ref[];plasma=1'>Dispense</A>", src) : "empty"))
+	if (src.emagged)
+		dat += text("<BR><br><FONT color = 'red'><B>N2O</B>: []</FONT> []<BR><br></TT>", src.n2otanks, (src.n2otanks ? text("<A href='?src=\ref[];n2o=1'>Dispense</A>", src) : "empty"))
 	user << browse(dat, "window=dispenser")
 	onclose(user, "dispenser")
 	return
@@ -92,15 +114,22 @@
 					src.o2tanks--
 			if (istype(src.loc, /mob))
 				attack_hand(src.loc)
-		else
-			if (href_list["plasma"])
-				if (text2num(href_list["plasma"]))
-					if (src.pltanks > 0)
-						use_power(5)
-						new /obj/item/tank/plasma( src.loc )
-						src.pltanks--
-				if (istype(src.loc, /mob))
-					attack_hand(src.loc)
+		else if (href_list["plasma"])
+			if (text2num(href_list["plasma"]))
+				if (src.pltanks > 0)
+					use_power(5)
+					new /obj/item/tank/plasma( src.loc )
+					src.pltanks--
+			if (istype(src.loc, /mob))
+				attack_hand(src.loc)
+		else if (href_list["n2o"])
+			if (text2num(href_list["n2o"]))
+				if (src.n2otanks > 0)
+					use_power(5)
+					new /obj/item/tank/anesthetic(src.loc)
+					src.n2otanks--
+			if(istype(src.loc, /mob))
+				attack_hand(src.loc)
 		src.add_fingerprint(usr)
 		for(var/mob/M in viewers(1, src))
 			if ((M.client && M.machine == src))

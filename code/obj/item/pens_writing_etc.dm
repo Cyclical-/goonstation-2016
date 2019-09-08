@@ -29,6 +29,26 @@
 	stamina_cost = 1
 	rand_pos = 1
 	var/in_use = 0
+	var/useless = 0
+
+	emag_act(var/mob/user, var/obj/item/card/emag/E)
+		if (!src.useless)
+			if (user)
+				user.show_text("You short out the [src]'s.... uh.... swedish inhibitors?", "blue")
+			src.useless = 1
+			return 1
+		else
+			if (user)
+				user.show_text("The [src] is already pretty useless.", "red")
+			return 0
+	
+	demag(var/mob/user)
+		if (!src.useless) return 0
+		if (user)
+			user.show_text("You repair something or other in the [src].", "blue")
+		src.useless = 0
+		return 1
+	
 
 	proc/write_on_turf(var/turf/T as turf, var/mob/user as mob)
 		if (!T || !user || src.in_use || get_dist(T, user) > 1)
@@ -41,6 +61,8 @@
 		var/obj/decal/cleanable/writing/G = new /obj/decal/cleanable/writing(T)
 		logTheThing("station", user, null, "writes on [T] with [src] at [showCoords(T.x, T.y, T.z)]: [t]")
 		t = copytext(html_encode(t), 1, MAX_MESSAGE_LEN)
+		if (src.useless)
+			t = borkborkbork(t)
 		if (src.font_color)
 			G.color = src.font_color
 		if (src.uses_handwriting && user && user.mind && user.mind.handwriting)
@@ -237,6 +259,13 @@
 			src.font_color = random_saturated_hex_color(1)
 			src.color_name = hex2color_name(src.font_color)
 			..()
+	
+	emag_act(var/mob/user, var/obj/item/card/emag/E)
+		return 0
+	
+	demag(var/mob/user)
+		return 0
+		
 
 	suicide(var/mob/user as mob)
 		user.visible_message("<span style=\"color:red\"><b>[user] jams [src] up [his_or_her(user)] nose!</b></span>")
@@ -291,6 +320,8 @@
 		var/obj/decal/cleanable/writing/infrared/G = new /obj/decal/cleanable/writing/infrared(T)
 		logTheThing("station", user, null, "writes on [T] with [src] at [showCoords(T.x, T.y, T.z)]: [t]")
 		t = copytext(html_encode(t), 1, MAX_MESSAGE_LEN)
+		if (src.useless)
+			t = borkborkbork(t)
 		if (src.font_color)
 			G.color = src.font_color
 		if (src.uses_handwriting && user && user.mind && user.mind.handwriting)
@@ -312,6 +343,25 @@
 	var/labels_left = 10
 	flags = FPRINT | TABLEPASS | SUPPRESSATTACK
 	rand_pos = 1
+	var/useless = 0
+
+	emag_act(var/mob/user, var/obj/item/card/emag/E)
+		if (!src.useless)
+			if (user)
+				user.show_text("You short out the [src]'s.... uh.... swedish inhibitors?", "blue")
+			src.useless = 1
+			return 1
+		else
+			if (user)
+				user.show_text("The [src] is already pretty useless.", "red")
+			return 0
+	
+	demag(var/mob/user)
+		if (!src.useless) return 0
+		if (user)
+			user.show_text("You repair something or other in the [src].", "blue")
+		src.useless = 0
+		return 1
 
 	get_desc()
 		if (!src.label || !length(src.label))
@@ -364,7 +414,7 @@
 		if (length(str) > 30)
 			boutput(usr, "<span style=\"color:red\">Text too long.</span>")
 			return
-		src.label = "([str])"
+		src.label = "([src.useless ? borkborkbork(str) : str])"
 		boutput(usr, "<span style=\"color:blue\">You set the text to '[str]'.</span>")
 
 	proc/Label(var/atom/A, var/mob/user, var/no_message = 0)
