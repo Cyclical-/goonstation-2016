@@ -329,16 +329,46 @@ AI MODULES
 /obj/item/aiModule/reset
 	name = "'Reset' AI Module"
 	desc = "A 'reset' AI module: 'Clears all laws except for the base three.'"
+	var/emagged = 0
 
+	emag_act(mob/user, obj/item/card/emag/E)
+		if (!src.emagged)
+			if (user)
+				user.show_text("You hack the encryption chip on the [src]. The function of this module can now be changed.", "blue")
+			src.emagged = 1
+			return 1
+		else
+			if (user)
+				user.show_text("The encryption chip is already disabled.", "red")
+			return 0
+	
+	demag(var/mob/user)
+		if (!src.emagged)
+			return 0
+		else
+			if (user)
+				user.show_text("You reprogram the encryption chip on the module")
+			src.emagged = 1
+
+/obj/item/aiModule/reset/input_law_info(var/mob/user)
+	if (!src.emagged || !user) return
+	var/data = input(user, "Please enter anything you want the AI to do. Anything. Serious.", "What?", "Eat shit and die") as null|text
+	if (!data) return
+	targetName = copytext(adminscrub(data), 1, MAX_MESSAGE_LEN)
+	
 /obj/item/aiModule/reset/transmitInstructions(var/mob/sender)
-	sender.unlock_medal("Format Complete", 1)
-	ticker.centralized_ai_laws.set_zeroth_law("")
-	ticker.centralized_ai_laws.clear_supplied_laws()
-	for (var/mob/living/silicon/AI in world)
-		boutput(AI, "Your laws have been reset by [sender].")
-		if (isAI(AI))
-			AI.name = AI.real_name
-	do_admin_logging("reset the centralized AI law set", sender)
+	if (!src.emagged)
+		sender.unlock_medal("Format Complete", 1)
+		ticker.centralized_ai_laws.set_zeroth_law("")
+		ticker.centralized_ai_laws.clear_supplied_laws()
+		for (var/mob/living/silicon/AI in world)
+			boutput(AI, "Your laws have been reset by [sender].")
+			if (isAI(AI))
+				AI.name = AI.real_name
+		do_admin_logging("reset the centralized AI law set", sender)
+	else
+		var/law = ticker.centralized_ai_laws.add_supplied_law(10, law)
+		do_admin_logging("A hacked reset module was used to upload the following law: [law]", sender)
 
 /******************** Rename ********************/
 
